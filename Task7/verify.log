@@ -1,0 +1,131 @@
+namespace/audit-zone created
+
+* No restrictions
+
+Checking insecure manifests:
+
+pod/privileged-pod created
+Applying insecure-manifests/01-privileged-pod.yaml succeeded.
+
+pod/hostpath-pod created
+Applying insecure-manifests/02-hostpath-pod.yaml succeeded.
+
+pod/root-user-pod created
+Applying insecure-manifests/03-root-user-pod.yaml succeeded.
+
+Checking secure manifests:
+
+pod/secure-privileged-pod created
+Applying secure-manifests/01-privileged-pod.yaml succeeded.
+
+pod/secure-hostpath-pod created
+Applying secure-manifests/02-hostpath-pod.yaml succeeded.
+
+pod/secure-root-user-pod created
+Applying secure-manifests/03-root-user-pod.yaml succeeded.
+
+namespace "audit-zone" deleted
+
+Setting up PSA
+
+namespace/audit-zone created
+
+NAME         STATUS   AGE   LABELS
+audit-zone   Active   1s    kubernetes.io/metadata.name=audit-zone,pod-security.kubernetes.io/enforce-version=latest,pod-security.kubernetes.io/enforce=restricted
+
+* PSA restrictions
+
+Checking insecure manifests:
+
+Error from server (Forbidden): error when creating "insecure-manifests/01-privileged-pod.yaml": pods "privileged-pod" is forbidden: violates PodSecurity "restricted:latest": privileged (container "privileged-pod-nginx" must not set securityContext.privileged=true), allowPrivilegeEscalation != false (container "privileged-pod-nginx" must set securityContext.allowPrivilegeEscalation=false)
+Applying insecure-manifests/01-privileged-pod.yaml failed (see error output).
+
+Error from server (Forbidden): error when creating "insecure-manifests/02-hostpath-pod.yaml": pods "hostpath-pod" is forbidden: violates PodSecurity "restricted:latest": restricted volume types (volume "host-logs" uses restricted volume type "hostPath")
+Applying insecure-manifests/02-hostpath-pod.yaml failed (see error output).
+
+Error from server (Forbidden): error when creating "insecure-manifests/03-root-user-pod.yaml": pods "root-user-pod" is forbidden: violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "root-user-pod-nginx" must set securityContext.allowPrivilegeEscalation=false), runAsNonRoot != true (container "root-user-pod-nginx" must not set securityContext.runAsNonRoot=false), runAsUser=0 (container "root-user-pod-nginx" must not set runAsUser=0)
+Applying insecure-manifests/03-root-user-pod.yaml failed (see error output).
+
+Checking secure manifests:
+
+pod/secure-privileged-pod created
+Applying secure-manifests/01-privileged-pod.yaml succeeded.
+
+pod/secure-hostpath-pod created
+Applying secure-manifests/02-hostpath-pod.yaml succeeded.
+
+pod/secure-root-user-pod created
+Applying secure-manifests/03-root-user-pod.yaml succeeded.
+
+namespace "audit-zone" deleted
+
+Setting up OPA
+
+namespace/audit-zone created
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  267k  100  267k    0     0   240k      0  0:00:01  0:00:01 --:--:--  241k
+namespace/gatekeeper-system created
+resourcequota/gatekeeper-critical-pods created
+customresourcedefinition.apiextensions.k8s.io/assign.mutations.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/assignimage.mutations.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/assignmetadata.mutations.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/configpodstatuses.status.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/configs.config.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/connectionpodstatuses.status.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/connections.connection.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/constraintpodstatuses.status.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/constrainttemplatepodstatuses.status.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/constrainttemplates.templates.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/expansiontemplate.expansion.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/expansiontemplatepodstatuses.status.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/modifyset.mutations.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/mutatorpodstatuses.status.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/providerpodstatuses.status.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/providers.externaldata.gatekeeper.sh created
+customresourcedefinition.apiextensions.k8s.io/syncsets.syncset.gatekeeper.sh created
+serviceaccount/gatekeeper-admin created
+role.rbac.authorization.k8s.io/gatekeeper-manager-role created
+clusterrole.rbac.authorization.k8s.io/gatekeeper-manager-role created
+rolebinding.rbac.authorization.k8s.io/gatekeeper-manager-rolebinding created
+clusterrolebinding.rbac.authorization.k8s.io/gatekeeper-manager-rolebinding created
+secret/gatekeeper-webhook-server-cert created
+service/gatekeeper-webhook-service created
+deployment.apps/gatekeeper-audit created
+deployment.apps/gatekeeper-controller-manager created
+poddisruptionbudget.policy/gatekeeper-controller-manager created
+mutatingwebhookconfiguration.admissionregistration.k8s.io/gatekeeper-mutating-webhook-configuration created
+validatingwebhookconfiguration.admissionregistration.k8s.io/gatekeeper-validating-webhook-configuration created
+constrainttemplate.templates.gatekeeper.sh/opahostpath created
+constrainttemplate.templates.gatekeeper.sh/oparunasnonroot created
+constrainttemplate.templates.gatekeeper.sh/opaprivileged created
+constrainttemplate.templates.gatekeeper.sh/opareadonlyrootfs created
+opahostpath.constraints.gatekeeper.sh/hostpath created
+oparunasnonroot.constraints.gatekeeper.sh/runasnonroot created
+opaprivileged.constraints.gatekeeper.sh/privileged created
+opareadonlyrootfs.constraints.gatekeeper.sh/readonlyrootfs created
+
+* OPA restrictions
+
+Checking insecure manifests:
+
+Error from server (Forbidden): error when creating "insecure-manifests/01-privileged-pod.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [privileged] Security Violation: Container 'privileged-pod-nginx' is privileged. This is forbidden.
+Applying insecure-manifests/01-privileged-pod.yaml failed (see error output).
+
+Error from server (Forbidden): error when creating "insecure-manifests/02-hostpath-pod.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [hostpath] Security Violation: Volume 'host-logs' uses hostPath, which is strictly forbidden.
+Applying insecure-manifests/02-hostpath-pod.yaml failed (see error output).
+
+Error from server (Forbidden): error when creating "insecure-manifests/03-root-user-pod.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [runasnonroot] Security Violation: Container 'root-user-pod-nginx' or Pod Spec must explicitly set runAsNonRoot to true.
+Applying insecure-manifests/03-root-user-pod.yaml failed (see error output).
+
+Checking secure manifests:
+
+pod/secure-privileged-pod created
+Applying secure-manifests/01-privileged-pod.yaml succeeded.
+
+pod/secure-hostpath-pod created
+Applying secure-manifests/02-hostpath-pod.yaml succeeded.
+
+pod/secure-root-user-pod created
+Applying secure-manifests/03-root-user-pod.yaml succeeded.
+

@@ -1,0 +1,20 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: opahostpath
+spec:
+  crd:
+    spec:
+      names:
+        kind: OPAHostPath
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package opahostpath
+
+        violation[{"msg": msg}] {
+          volume := input.review.object.spec.volumes[_]
+          volume["hostPath"]
+          msg := sprintf("Security Violation: Volume '%v' uses hostPath, which is strictly forbidden.", [volume.name])
+        }
+

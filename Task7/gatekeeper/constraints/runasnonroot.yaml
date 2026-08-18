@@ -1,0 +1,9 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: OPARunAsNonRoot
+metadata:
+  name: runasnonroot
+spec:
+  match:
+    namespaces:
+      - audit-zone
+

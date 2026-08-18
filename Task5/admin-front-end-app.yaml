@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-front-end-app
+  namespace: propdevelopment
+  labels:
+    app: admin-front-end
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-front-end
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: admin-front-end
+    spec:
+      containers:
+      - name: admin-front-end
+        image: nginx:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "300m"
+            memory: "256Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-front-end-app
+  namespace: propdevelopment
+spec:
+  selector:
+    app: admin-front-end
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP

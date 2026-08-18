@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-mart-estate-app
+  namespace: client-mart-estate-test
+  labels:
+    app: client-mart-estate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client-mart-estate
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: client-mart-estate
+    spec:
+      containers:
+      - name: client-mart-estate
+        image: nginx:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "300m"
+            memory: "256Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-mart-estate-app
+  namespace: client-mart-estate-test
+spec:
+  selector:
+    app: client-mart-estate
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP

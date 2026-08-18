@@ -1,0 +1,21 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: oparunasnonroot
+spec:
+  crd:
+    spec:
+      names:
+        kind: OPARunAsNonRoot
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package oparunasnonroot
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          not container.securityContext.runAsNonRoot == true
+          not input.review.object.spec.securityContext.runAsNonRoot == true
+          msg := sprintf("Security Violation: Container '%v' or Pod Spec must explicitly set runAsNonRoot to true.", [container.name])
+        }
+
