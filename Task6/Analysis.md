@@ -44,7 +44,9 @@ minikube kubectl -- logs kube-apiserver-minikube -n kube-system 2>&1 | tee audit
 
 Отдельно стоит отметить, что попытка удалить audit-policy.yaml командой
 
+```
 kubectl delete -f ~/.minikube/files/etc/ssl/certs/audit-policy.yaml --as=admin
+```
 
 сломалась на клиенте и никак не отразилась в audit.log.
 
