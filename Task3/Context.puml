@@ -17,6 +17,6 @@ Rel(Owner, SmarthomeSystem, "Использует систему")
 
 Rel(Administrator, SmarthomeSystem, "Управляет системой")
 
-Rel(SmarthomeSystem, DeviceAPI, "Выдаёт команды на устройства")
+Rel(SmarthomeSystem, DeviceAPI, "Вызывает внешние API для управления устройствами")
 
 @enduml

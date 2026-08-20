@@ -1,10 +1,24 @@
+### Важно
+
+В задании говорится
+
+* Подготовьте скрипты для создания пользователей. 
+* Подготовьте скрипты, чтобы создать роли.
+* Подготовьте скрипты, чтобы связать пользователей с ролями.
+
+Но пользователи и группы живут вне k8s, не совсем ясно, что именно требуется.
+
+Тк цель задания выглядит как "научиться настраивать RBAC", то пользователи и группы не создаются, вместо этого группы привязываются к ролям в RBAC и тестирование выполняется с помощью ```--as``` и ```--as-group```.
+
+### Описание ролей, групп и прав
+
 Предположим сотрудники ровно такие как в описании задачи:
 
 * Разработчики
 * Инженеры по эксплуатации
 * DevOps-инженеры
 
-Но разработчики ещё делятся на команды (группы), которые разрабатывают:
+Но разработчики ещё делятся на команды (группы), которые разрабатывают (формат группа: список приложений):
 
 1. client-flow-dev: client-mart-estate-app client-mart-app client-tour-app
 1. client-crm-dev: client-crm-app
@@ -22,9 +36,17 @@
 | support | admin (например раздавать роли) для *-test namespaces, edit (например создавать deployments) - для production | инженеры по эксплуатации |
 | *-dev | edit (например создавать deployments) для своих *-test namespaces, config-updater, pod-restarter, view - для всех *-test, view - для всех production, pod-restarter - для своих production | разработчики соответствующих модулей |
 
+### Настройка и тестирование
 
+Запускаем minikube.
+
+```
 minikube start
+```
 
+Создаём пространства имён - по два пространства на каждый модуль - тестовый и production контуры:
+
+```
 find . -name '*.yaml' -exec fgrep namespace {} \; | sort -u | fgrep -v '#' | awk '{print $2;}' | while read N; do minikube kubectl -- create namespace ${N}; done
 namespace/client-crm created
 namespace/client-crm-test created
@@ -36,7 +58,11 @@ namespace/client-tour created
 namespace/client-tour-test created
 namespace/tenant-core created
 namespace/tenant-core-test created
+```
 
+Запускаем поды сервисов:
+
+```
 find . -name '*.yaml' -a -not -name 'rbac.yaml' -exec minikube kubectl -- apply -f {} \;
 deployment.apps/client-crm-app created
 service/client-crm-app created
@@ -58,7 +84,11 @@ deployment.apps/client-tour-app created
 service/client-tour-app created
 deployment.apps/tenant-core-app created
 service/tenant-core-app created
+```
 
+Проверяем:
+
+```
 minikube kubectl -- get pods -A
 NAMESPACE                 NAME                                     READY   STATUS    RESTARTS        AGE
 client-crm-test           client-crm-app-575789496f-ccbxs          1/1     Running   0               70s
@@ -79,8 +109,11 @@ kube-system               kube-scheduler-minikube                  1/1     Runni
 kube-system               storage-provisioner                      1/1     Running   1 (4m15s ago)   4m42s
 tenant-core-test          tenant-core-app-7486f5f58c-gcvf9         1/1     Running   0               64s
 tenant-core               tenant-core-app-7486f5f58c-cdp42         1/1     Running   0               55s
+```
 
+Применяем политику RBAC:
 
+```
 minikube kubectl -- apply -f rbac.yaml
 clusterrole.rbac.authorization.k8s.io/pod-restarter created
 clusterrole.rbac.authorization.k8s.io/config-updater created
@@ -155,7 +188,11 @@ rolebinding.rbac.authorization.k8s.io/client-flow-dev-client-mart-pod-restarter 
 rolebinding.rbac.authorization.k8s.io/client-flow-dev-client-tour-pod-restarter created
 rolebinding.rbac.authorization.k8s.io/client-crm-dev-client-crm-pod-restarter created
 rolebinding.rbac.authorization.k8s.io/tenant-core-dev-tenant-core-pod-restarter created
+```
 
+Проверяем корректность работы политики - пробуем выполнить действия от имени пользователей разных групп и смотрим на результат - он соответствует задуманному:
+
+```
 ./check-rbac.sh
 can user from devops patch resourcequotas in client-mart-estate namespace? yes
 can user from devops patch resourcequotas in client-mart namespace? yes
@@ -457,3 +494,4 @@ can user from tenant-core-dev list pods in client-mart-test namespace? yes
 can user from tenant-core-dev list pods in client-tour-test namespace? yes
 can user from tenant-core-dev list pods in client-crm-test namespace? yes
 can user from tenant-core-dev list pods in tenant-core-test namespace? yes
+```
