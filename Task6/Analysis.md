@@ -58,6 +58,8 @@ python3 analyze.py audit.log 2026-08-16T20:53:00.000000Z
 
 Далее идут результаты с комментариями. Многие строки не откомментированы тк я сосредотачивался на действиях из скрипта, эмулирующего инцидент. Эти строки либо результат действий скрипта, но не основной (например делается get pods перед patch pods) либо системные действия системных пользователей. 
 
+---
+
 ```
 user system:node:minikube was ALLOWED to patch events in kube-system namespace 4 times
 user system:apiserver was ALLOWED to get endpoints in default namespace 2 times
@@ -85,7 +87,7 @@ kubectl run attacker-pod --image=alpine --command -- sleep 3600
 
 Комментарий согласно постановке задачи:
 
-- Тут просто запускается обычный под, выглядит ок, хотя видно, что в пространстве имён могут быть запущени привилигеровнные поды: "pod-security.kubernetes.io/enforce-policy":"privileged:latest"
+- Тут просто запускается обычный под, выглядит ок, хотя видно, что в пространстве имён могут быть запущены привилигеровнные поды: "pod-security.kubernetes.io/enforce-policy":"privileged:latest"
 
 Команда #2 из скрипта, которая привела к появлению записи:
 
