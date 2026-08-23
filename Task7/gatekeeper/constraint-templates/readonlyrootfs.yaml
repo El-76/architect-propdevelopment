@@ -1,0 +1,20 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: opareadonlyrootfs
+spec:
+  crd:
+    spec:
+      names:
+        kind: OPAReadOnlyRootFS
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package opareadonlyrootfs
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          not container.securityContext.readOnlyRootFilesystem == true
+          msg := sprintf("Security Violation: Container '%v' must have readOnlyRootFilesystem set to true.", [container.name])
+        }
+

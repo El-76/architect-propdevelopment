@@ -1,0 +1,12 @@
+namespace/secure-ops created
+Context "minikube" modified.
+serviceaccount/monitoring created
+pod/attacker-pod created
+no
+Error from server (Forbidden): secrets "bootstrap-token-mv3vlo" is forbidden: User "system:serviceaccount:secure-ops:monitoring" cannot get resource "secrets" in API group "" in the namespace "kube-system"
+pod/privileged-pod created
+OCI runtime exec failed: exec failed: unable to start container process: exec: "cat": executable file not found in $PATH
+command terminated with exit code 127
+error: resource mapping not found for name: "" namespace: "" from "/home/maaaah/.minikube/files/etc/ssl/certs/audit-policy.yaml": no matches for kind "Policy" in version "audit.k8s.io/v1"
+ensure CRDs are installed first
+rolebinding.rbac.authorization.k8s.io/escalate-binding created

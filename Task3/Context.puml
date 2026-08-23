@@ -1,0 +1,22 @@
+puml
+@startuml Propdevelopment
+
+title Propdevelopment Smarthome Context Diagram
+
+!include <C4/C4_Component>
+
+Person(Owner, "Собственник", "Собственник объекта, где есть устройства Умного Дома")
+
+Person(Administrator, "Администратор", "Администратор, управляющий системой")
+
+System(SmarthomeSystem, "Smarthome System", "Система управления устройствами Умного Дома")
+
+System_Ext(DeviceAPI, "Device API", "Внешние API устройств (шлагбаумов, домофонов и тп)")
+
+Rel(Owner, SmarthomeSystem, "Использует систему")
+
+Rel(Administrator, SmarthomeSystem, "Управляет системой")
+
+Rel(SmarthomeSystem, DeviceAPI, "Вызывает внешние API для управления устройствами")
+
+@enduml

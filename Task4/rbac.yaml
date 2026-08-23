@@ -1,0 +1,1261 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pod-restarter
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "patch", "update"]
+- apiGroups: ["apps"]
+  resources: ["deployments/status"]
+  verbs: ["get"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: config-updater
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list", "watch", "update", "patch"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "watch", "update", "patch"]
+---
+
+# cluser-admin for devops
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: devops-global-cluster-admin
+subjects:
+- kind: Group
+  name: devops
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+# support
+
+# admin для *-test namespaces, edit - для production
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: support-client-mart-estate-edit
+  namespace: client-mart-estate
+subjects:
+  - kind: Group
+    name: support
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: support-client-mart-estate-test-admin
+  namespace: client-mart-estate-test
+subjects:
+  - kind: Group
+    name: support
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: admin
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: support-client-mart-edit
+  namespace: client-mart
+subjects:
+  - kind: Group
+    name: support
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: support-client-mart-test-admin
+  namespace: client-mart-test
+subjects:
+  - kind: Group
+    name: support
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: admin
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: support-client-tour-edit
+  namespace: client-tour
+subjects:
+  - kind: Group
+    name: support
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: support-client-tour-test-admin
+  namespace: client-tour-test
+subjects:
+  - kind: Group
+    name: support
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: admin
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: support-client-crm-edit
+  namespace: client-crm
+subjects:
+  - kind: Group
+    name: support
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: support-client-crm-test-admin
+  namespace: client-crm-test
+subjects:
+  - kind: Group
+    name: support
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: admin
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: support-tenant-core-edit
+  namespace: tenant-core
+subjects:
+  - kind: Group
+    name: support
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: support-tenant-core-test-admin
+  namespace: tenant-core-test
+subjects:
+  - kind: Group
+    name: support
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: admin
+  apiGroup: rbac.authorization.k8s.io
+---
+
+
+# *-dev
+
+# edit для своих *-test namespaces
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-mart-estate-test-edit
+  namespace: client-mart-estate-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-mart-test-edit
+  namespace: client-mart-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-tour-test-edit
+  namespace: client-tour-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-crm-test-edit
+  namespace: client-crm-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-tenant-core-test-edit
+  namespace: tenant-core-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+
+
+# config-updater, pod-restarter, view - для всех *-test
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-mart-estate-test-config-updater
+  namespace: client-mart-estate-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-mart-estate-test-pod-restarter
+  namespace: client-mart-estate-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-mart-estate-test-view
+  namespace: client-mart-estate-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-mart-estate-test-config-updater
+  namespace: client-mart-estate-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-mart-estate-test-pod-restarter
+  namespace: client-mart-estate-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-mart-estate-test-view
+  namespace: client-mart-estate-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-mart-estate-test-config-updater
+  namespace: client-mart-estate-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-mart-estate-test-pod-restarter
+  namespace: client-mart-estate-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-mart-estate-test-view
+  namespace: client-mart-estate-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-mart-test-config-updater
+  namespace: client-mart-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-mart-test-pod-restarter
+  namespace: client-mart-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-mart-test-view
+  namespace: client-mart-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-mart-test-config-updater
+  namespace: client-mart-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-mart-test-pod-restarter
+  namespace: client-mart-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-mart-test-view
+  namespace: client-mart-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-mart-test-config-updater
+  namespace: client-mart-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-mart-test-pod-restarter
+  namespace: client-mart-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-mart-test-view
+  namespace: client-mart-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-tour-test-config-updater
+  namespace: client-tour-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-tour-test-pod-restarter
+  namespace: client-tour-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-tour-test-view
+  namespace: client-tour-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-tour-test-config-updater
+  namespace: client-tour-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-tour-test-pod-restarter
+  namespace: client-tour-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-tour-test-view
+  namespace: client-tour-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-tour-test-config-updater
+  namespace: client-tour-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-tour-test-pod-restarter
+  namespace: client-tour-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-tour-test-view
+  namespace: client-tour-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-crm-test-config-updater
+  namespace: client-crm-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-crm-test-pod-restarter
+  namespace: client-crm-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-crm-test-view
+  namespace: client-crm-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-crm-test-config-updater
+  namespace: client-crm-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-crm-test-pod-restarter
+  namespace: client-crm-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-crm-test-view
+  namespace: client-crm-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-crm-test-config-updater
+  namespace: client-crm-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-crm-test-pod-restarter
+  namespace: client-crm-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-crm-test-view
+  namespace: client-crm-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-tenant-core-test-config-updater
+  namespace: tenant-core-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-tenant-core-test-pod-restarter
+  namespace: tenant-core-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-tenant-core-test-view
+  namespace: tenant-core-test
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-tenant-core-test-config-updater
+  namespace: tenant-core-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-tenant-core-test-pod-restarter
+  namespace: tenant-core-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-tenant-core-test-view
+  namespace: tenant-core-test
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-tenant-core-test-config-updater
+  namespace: tenant-core-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: config-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-tenant-core-test-pod-restarter
+  namespace: tenant-core-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-tenant-core-test-view
+  namespace: tenant-core-test
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+
+# view - для production
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-mart-estate-view
+  namespace: client-mart-estate
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-mart-estate-view
+  namespace: client-mart-estate
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-mart-estate-view
+  namespace: client-mart-estate
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-mart-view
+  namespace: client-mart
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-mart-view
+  namespace: client-mart
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-mart-view
+  namespace: client-mart
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-tour-view
+  namespace: client-tour
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-tour-view
+  namespace: client-tour
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-tour-view
+  namespace: client-tour
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-crm-view
+  namespace: client-crm
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-crm-view
+  namespace: client-crm
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-client-crm-view
+  namespace: client-crm
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-tenant-core-view
+  namespace: tenant-core
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-tenant-core-view
+  namespace: tenant-core
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-tenant-core-view
+  namespace: tenant-core
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+---
+
+
+# pod-restarter - для своих production
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-mart-estate-pod-restarter
+  namespace: client-mart-estate
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-mart-pod-restarter
+  namespace: client-mart
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-flow-dev-client-tour-pod-restarter
+  namespace: client-tour
+subjects:
+  - kind: Group
+    name: client-flow-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: client-crm-dev-client-crm-pod-restarter
+  namespace: client-crm
+subjects:
+  - kind: Group
+    name: client-crm-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tenant-core-dev-tenant-core-pod-restarter
+  namespace: tenant-core
+subjects:
+  - kind: Group
+    name: tenant-core-dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-restarter
+  apiGroup: rbac.authorization.k8s.io
+---
+
